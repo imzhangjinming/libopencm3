@@ -37,30 +37,7 @@ void main(void);
 void blocking_handler(void);
 void null_handler(void);
 
-__attribute__ ((section(".vectors")))
-vector_table_t vector_table = {
-	.initial_sp_value = &_stack,
-	.reset = reset_handler,
-	.nmi = nmi_handler,
-	.hard_fault = hard_fault_handler,
-
-/* Those are defined only on CM3 or CM4 */
-#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
-	.memory_manage_fault = mem_manage_handler,
-	.bus_fault = bus_fault_handler,
-	.usage_fault = usage_fault_handler,
-	.debug_monitor = debug_monitor_handler,
-#endif
-
-	.sv_call = sv_call_handler,
-	.pend_sv = pend_sv_handler,
-	.systick = sys_tick_handler,
-	.irq = {
-		IRQ_HANDLERS
-	}
-};
-
-void __attribute__ ((weak, naked)) reset_handler(void)
+void __attribute__ ((weak, naked)) bl_reset_handler(void)
 {
 	volatile unsigned *src, *dest;
 	funcp_t *fp;
@@ -99,6 +76,31 @@ void __attribute__ ((weak, naked)) reset_handler(void)
 	}
 
 }
+
+
+__attribute__ ((section(".vectors")))
+vector_table_t vector_table = {
+	.initial_sp_value = &_stack,
+	.reset = bl_reset_handler,
+	.nmi = nmi_handler,
+	.hard_fault = hard_fault_handler,
+
+/* Those are defined only on CM3 or CM4 */
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+	.memory_manage_fault = mem_manage_handler,
+	.bus_fault = bus_fault_handler,
+	.usage_fault = usage_fault_handler,
+	.debug_monitor = debug_monitor_handler,
+#endif
+
+	.sv_call = sv_call_handler,
+	.pend_sv = pend_sv_handler,
+	.systick = sys_tick_handler,
+	.irq = {
+		IRQ_HANDLERS
+	}
+};
+
 
 void blocking_handler(void)
 {

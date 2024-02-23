@@ -25,7 +25,7 @@
 EXTERN (vector_table)
 
 /* Define the entry point of the output file. */
-ENTRY(reset_handler)
+ENTRY(bl_reset_handler)
 
 /* Define sections. */
 SECTIONS
